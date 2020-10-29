@@ -1,0 +1,21 @@
+﻿@page "/error"
+@using Microsoft.Extensions.Localization
+
+
+    <h1 class="text-danger">@(Localizer["Error"]).</h1>
+    <h2 class="text-danger"> @(Localizer["AnErrorOccurred"]).</h2>
+
+        <h3>@(Localizer["DevelopmentMode"])</h3>
+        <p>
+            @(Localizer["SwappingToDevelopmentEnvironment"])
+        </p>
+        <p>
+            <strong>@(Localizer["DevelopmentEnvironmentNotBeEnabledForDeployedApplications"])</strong>
+            @(Localizer["DisplaySensitiveInformation"])<strong>Development</strong> @(Localizer["DefineEnvironmentVariable"]) <strong>ASPNETCORE_ENVIRONMENT</strong> @(Localizer["EnvironmentVariable"]) <strong>Development</strong>
+            @(Localizer["RestartYourApp"])
+        </p>
+
+        @code {
+            [Inject]
+            public IStringLocalizer<Error> Localizer { get; set; }
+        }

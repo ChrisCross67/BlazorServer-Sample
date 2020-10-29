@@ -1,0 +1,52 @@
+﻿@page "/fetchdata"
+
+@using DataLibrary
+@using Microsoft.Extensions.Localization
+
+@inject IFetchDataViewModel fetchDataViewModel
+<h1>@(Localizer["WeatherForecast"])</h1>
+
+<p>@(Localizer["FetchingDataFromService"])</p>
+
+@if (fetchDataViewModel.WeatherForecasts == null)
+{
+    <p><em>@(LocalizerApp["Loading"]) ...</em></p>
+}
+else
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th>@(Localizer["Date"])</th>
+                <th>@(Localizer["Temp"]) (C)</th>
+                <th>@(Localizer["Temp"]) (F)</th>
+                <th>@(Localizer["Summary"])</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (WeatherForecast forecast in fetchDataViewModel.WeatherForecasts)
+            {
+                <tr>
+                    <td>@forecast.Date.ToShortDateString()</td>
+                    <td>@forecast.TemperatureC</td>
+                    <td>@forecast.TemperatureF</td>
+                    <td>@forecast.Summary</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+
+    protected override async Task OnInitializedAsync()
+    {
+        await fetchDataViewModel.RetrieveForecastsAsync();
+    }
+
+
+    [Inject]
+    public IStringLocalizer<FetchData> Localizer { get; set; }
+    [Inject]
+    public IStringLocalizer<App> LocalizerApp { get; set; }
+}

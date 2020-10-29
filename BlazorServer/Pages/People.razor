@@ -1,0 +1,86 @@
+﻿@page "/people"
+
+@using DataLibrary
+@using BlazorServer.Models
+@using Microsoft.Extensions.Configuration
+@using Microsoft.Extensions.Localization
+@inject IDataAccess _data
+@inject IConfiguration _config
+
+<h1>@(LocalizerApp["People"])</h1>
+
+<button class="btn btn-primary" @onclick="InsertData">@(LocalizerApp["Insert"])</button>
+<button class="btn btn-warning" @onclick="UpdateData">@(LocalizerApp["Update"])</button>
+<button class="btn btn-danger" @onclick="DeleteData">@(LocalizerApp["Delete"])</button>
+
+@if (people == null)
+{
+    <p><em>@(LocalizerApp["Loading"]) ...</em></p>
+}
+else
+
+
+
+{
+    <table class="table">
+        <thead>
+            <tr>
+                <th> @(Localizer["FirstName"]) </th>
+                <th> @(Localizer["LastName"]) </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var p in people)
+            {
+                <tr>
+                    <td> @p.FirstName </td>
+                    <td> @p.LastName </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    }
+
+    @code {
+        [Inject]
+        public IStringLocalizer<People> Localizer { get; set; }
+        [Inject]
+        public IStringLocalizer<App> LocalizerApp { get; set; }
+
+
+        List<PersonModel> people;
+
+        private async Task InsertData()
+        {
+            string sql = "insert into people (FirstName, LastName) values (@FirstName, @LastName);";
+
+            await _data.Save(sql, new { FirstName = "Billy", LastName = "Bob" }, _config.GetConnectionString("default"));
+
+            await OnInitializedAsync();
+        }
+
+        private async Task UpdateData()
+        {
+            string sql = "update people set FirstName = @FirstName where LastName = @LastName";
+
+            await _data.Save(sql, new { FirstName = "Timothy", LastName = "Corey" }, _config.GetConnectionString("default"));
+
+            await OnInitializedAsync();
+        }
+
+        private async Task DeleteData()
+        {
+            string sql = "delete from people where LastName = @LastName";
+
+            await _data.Save(sql, new { LastName = "Bob" }, _config.GetConnectionString("default"));
+
+            await OnInitializedAsync();
+        }
+
+protected override async Task OnInitializedAsync()
+    {
+        string sql = "select * from people";
+
+        people = await _data.Load<PersonModel, dynamic>(sql, new { }, _config.GetConnectionString("default"));
+    }
+    }

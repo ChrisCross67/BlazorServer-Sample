@@ -1,0 +1,23 @@
+﻿@page "/counter"
+@using Microsoft.Extensions.Localization
+
+<h1>@(Localizer["Title"])</h1>
+
+<p>@(Localizer["CurrentCount"]): @currentCount</p>
+
+    <button class="btn btn-primary" @onclick="IncrementCount">@(LocalizerApp["OK"])</button>
+
+    @code {
+        private int currentCount = 0;
+
+        private void IncrementCount()
+        {
+            currentCount++;
+        }
+
+        [Inject]
+        public IStringLocalizer<Counter> Localizer { get; set; }
+        [Inject]
+        public IStringLocalizer<App> LocalizerApp { get; set; }
+
+    }
